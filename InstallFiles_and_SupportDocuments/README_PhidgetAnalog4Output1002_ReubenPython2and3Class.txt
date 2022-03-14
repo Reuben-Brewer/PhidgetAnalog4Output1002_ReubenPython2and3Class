@@ -22,11 +22,11 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision D, 02/22/2022
+Software Revision E, 03/13/2022
 
 Verified working on: 
-Python 2.7 and 3.7.
-Windows 8.1 64-bit
+Python 2.7, 3.8.
+Windows 8.1, 10 64-bit
 Raspberry Pi Buster 
 (no Mac testing yet)
 

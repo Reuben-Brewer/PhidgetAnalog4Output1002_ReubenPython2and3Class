@@ -6,9 +6,9 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision D, 02/22/2022
+Software Revision E, 03/13/2022
 
-Verified working on: Python 2.7 and 3 for Windows 8.1 64-bit and Raspberry Pi Buster (no Mac testing yet).
+Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
@@ -78,6 +78,21 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
         self.EnableInternal_MyPrint_Flag = 0
         self.MainThread_still_running_flag = 0
 
+        #########################################################
+        self.CurrentTime_CalculatedFromMainThread = -11111.0
+        self.StartingTime_CalculatedFromMainThread = -11111.0
+        self.LastTime_CalculatedFromMainThread = -11111.0
+        self.DataStreamingFrequency_CalculatedFromMainThread = -11111.0
+        self.DataStreamingDeltaT_CalculatedFromMainThread = -11111.0
+        #########################################################
+
+        #########################################################
+        self.DetectedDeviceName = "default"
+        self.DetectedDeviceID = "default"
+        self.DetectedDeviceVersion = "default"
+        self.DetectedDeviceSerialNumber = "default"
+        #########################################################
+
         self.ToggleVoltageToMeasureMaxFrequency_ToggleState = -1 #-1 or 1, never 0
 
         self.VoltageOutputsList_PhidgetsVoltageOutputObjects = list()
@@ -93,7 +108,10 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
         self.VoltageOutputsList_Voltage_NeedsToBeChangedFlag = [1]*4
         self.VoltageOutputsList_Voltage_ToBeSet = [0] * 4
 
-        self.MostRecentDutyCycleDict = dict()
+        self.MostRecentDataDict = dict([("VoltageOutputsList_EnabledState", self.VoltageOutputsList_EnabledState),
+                                        ("VoltageOutputsList_Voltage", self.VoltageOutputsList_Voltage),
+                                        ("VoltageOutputsList_ErrorCallbackFiredFlag", self.VoltageOutputsList_ErrorCallbackFiredFlag),
+                                        ("Time", self.CurrentTime_CalculatedFromMainThread)])
 
         ##########################################
         ##########################################
@@ -241,6 +259,15 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
             print("GUI_COLUMNSPAN = " + str(self.GUI_COLUMNSPAN))
             ##########################################
 
+            ##########################################
+            if "GUI_STICKY" in self.GUIparametersDict:
+                self.GUI_STICKY = str(self.GUIparametersDict["GUI_STICKY"])
+            else:
+                self.GUI_STICKY = "w"
+
+            print("GUI_STICKY = " + str(self.GUI_STICKY))
+            ##########################################
+
         else:
             self.GUIparametersDict = dict()
             self.USE_GUI_FLAG = 0
@@ -360,18 +387,6 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
         self.PrintToGui_Label_TextInputHistory_List = [" "]*self.NumberOfPrintLines
         self.PrintToGui_Label_TextInput_Str = ""
         self.GUI_ready_to_be_updated_flag = 0
-        #########################################################
-
-        #########################################################
-        self.CurrentTime_CalculatedFromMainThread = -11111
-        self.LastTime_CalculatedFromMainThread = -11111
-        self.DataStreamingFrequency_CalculatedFromMainThread = -11111
-        self.DataStreamingDeltaT_CalculatedFromMainThread = -11111
-
-        self.DetectedDeviceName = "default"
-        self.DetectedDeviceID = "default"
-        self.DetectedDeviceVersion = "default"
-        self.DetectedDeviceSerialNumber = "default"
         #########################################################
 
         #########################################################
@@ -771,12 +786,12 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
     ##########################################################################################################
     def GetMostRecentDataDict(self):
 
-        self.MostRecentDutyCycleDict = dict([("VoltageOutputsList_EnabledState", self.VoltageOutputsList_EnabledState),
+        self.MostRecentDataDict = dict([("VoltageOutputsList_EnabledState", self.VoltageOutputsList_EnabledState),
                                              ("VoltageOutputsList_Voltage", self.VoltageOutputsList_Voltage),
                                              ("VoltageOutputsList_ErrorCallbackFiredFlag", self.VoltageOutputsList_ErrorCallbackFiredFlag),
                                              ("Time", self.CurrentTime_CalculatedFromMainThread)])
 
-        return self.MostRecentDutyCycleDict
+        return self.MostRecentDataDict
     ##########################################################################################################
     ##########################################################################################################
 
@@ -879,13 +894,13 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
         
         self.MainThread_still_running_flag = 1
 
-
+        self.StartingTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString()
 
         ###############################################
         while self.EXIT_PROGRAM_FLAG == 0:
 
             ###############################################
-            self.CurrentTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString()
+            self.CurrentTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString() - self.StartingTime_CalculatedFromMainThread
             ###############################################
 
             ###############################################
@@ -1015,7 +1030,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
                           padx = self.GUI_PADX,
                           pady = self.GUI_PADY,
                           rowspan = self.GUI_ROWSPAN,
-                          columnspan= self.GUI_COLUMNSPAN)
+                          columnspan= self.GUI_COLUMNSPAN,
+                          sticky = self.GUI_STICKY)
         ###################################################
 
         ###################################################
