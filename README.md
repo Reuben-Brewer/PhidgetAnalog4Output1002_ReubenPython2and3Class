@@ -1,11 +1,10 @@
-########################  
+###########################
 
 PhidgetAnalog4Output1002_ReubenPython2and3Class
 
 Wrapper (including ability to hook to Tkinter GUI) to control Phidget Analog 4-Output (4 analog-out voltages @ 12 bit resolution) 1002 (non VINT).
 
 From Phidgets' website:
-
 "The PhidgetAnalog 4-Output Produces a voltage over -10V to +10V at a maximum of 20mA.
 If this current is exceeded an error will be thrown to notify that the voltage may have dropped below the setpoint.
 The voltage is produced with 12 bit resolution (4.8mV).
@@ -26,7 +25,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision E, 03/13/2022
+Software Revision F, 07/20/2022
 
 Verified working on: 
 
@@ -40,15 +39,23 @@ Raspberry Pi Buster
 
 *NOTE THAT YOU MUST INSTALL BOTH THE Phidget22 LIBRARY AS WELL AS THE PYTHON MODULE.*
 
-########################  
+###########################
 
 ########################### Python module installation instructions, all OS's
+
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'Phidget22']
+
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['future.builtins', 'MyPrint_ReubenPython2and3Class']
+
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins']
+
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'MyPrint_ReubenPython2and3Class', 'Phidget22']
 
 https://pypi.org/project/Phidget22/#files
 
 To install the Python module using pip:
 
-pip install Phidget22 (with "sudo" if on Linux/Raspberry Pi)
+pip install Phidget22       (with "sudo" if on Linux/Raspberry Pi)
 
 To install the Python module from the downloaded .tar.gz file, enter downloaded folder and type "python setup.py install"
 
