@@ -6,22 +6,29 @@ reuben.brewer@gmail.com,
 www.reubotics.com
 
 Apache 2 License
-Software Revision E, 03/13/2022
+Software Revision F, 07/20/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
+###########################################################
 from PhidgetAnalog4Output1002_ReubenPython2and3Class import *
 from MyPrint_ReubenPython2and3Class import *
+###########################################################
 
-import os, sys, platform
-import time, datetime
+###########################################################
+import os
+import sys
+import platform
+import time
+import datetime
 import threading
 import collections
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from Tkinter import * #Python 2
     import tkFont
@@ -30,22 +37,22 @@ else:
     from tkinter import * #Python 3
     import tkinter.font as tkFont #Python 3
     from tkinter import ttk
-###############
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from builtins import raw_input as input
 else:
     from future.builtins import input as input #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
-###############
+###########################################################
 
-###############
+###########################################################
 import platform
 if platform.system() == "Windows":
     import ctypes
     winmm = ctypes.WinDLL('winmm')
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
-###############
+###########################################################
 
 ###########################################################################################################
 ##########################################################################################################
@@ -122,7 +129,12 @@ def ExitProgram_Callback():
 ##########################################################################################################
 def GUI_Thread():
     global root
+    global root_Xpos
+    global root_Ypos
+    global root_width
+    global root_height
     global GUI_RootAfterCallbackInterval_Milliseconds
+    global USE_TABS_IN_GUI_FLAG
 
     ################################################# KEY GUI LINE
     #################################################
@@ -131,19 +143,64 @@ def GUI_Thread():
     #################################################
 
     #################################################
-    TestButton = Button(root, text='Test Button', state="normal", width=20, command=lambda i=1: TestButtonResponse())
-    TestButton.grid(row=0, column=0, padx=5, pady=1)
+    #################################################
+    global TabControlObject
+    global Tab_MainControls
+    global Tab_VOLTAGEOUT
+    global Tab_MyPrint
+
+    if USE_TABS_IN_GUI_FLAG == 1:
+        #################################################
+        TabControlObject = ttk.Notebook(root)
+
+        Tab_VOLTAGEOUT = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_VOLTAGEOUT, text='   VoltageOut   ')
+
+        Tab_MainControls = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
+
+        Tab_MyPrint = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_MyPrint, text='   MyPrint Terminal   ')
+
+        TabControlObject.pack(expand=1, fill="both")  # CANNOT MIX PACK AND GRID IN THE SAME FRAME/TAB, SO ALL .GRID'S MUST BE CONTAINED WITHIN THEIR OWN FRAME/TAB.
+
+        ############# #Set the tab header font
+        TabStyle = ttk.Style()
+        TabStyle.configure('TNotebook.Tab', font=('Helvetica', '12', 'bold'))
+        #############
+        #################################################
+    else:
+        #################################################
+        Tab_MainControls = root
+        Tab_VOLTAGEOUT = root
+        Tab_MyPrint = root
+        #################################################
+
+    #################################################
     #################################################
 
     #################################################
+    #################################################
+    TestButton = Button(Tab_MainControls, text='Test Button', state="normal", width=20, command=lambda i=1: TestButtonResponse())
+    TestButton.grid(row=0, column=0, padx=5, pady=1)
+    #################################################
+    #################################################
+
+    ################################################# THIS BLOCK MUST COME 2ND-TO-LAST IN def GUI_Thread() IF USING TABS.
+    #################################################
     root.protocol("WM_DELETE_WINDOW", ExitProgram_Callback)  # Set the callback function for when the window's closed.
+    root.title("test_program_for_PhidgetAnalog4Output1002_ReubenPython2and3Class")
+    root.geometry('%dx%d+%d+%d' % (root_width, root_height, root_Xpos, root_Ypos)) # set the dimensions of the screen and where it is placed
     root.after(GUI_RootAfterCallbackInterval_Milliseconds, GUI_update_clock)
     root.mainloop()
     #################################################
+    #################################################
 
+    #################################################
     #################################################
     root.quit() #Stop the GUI thread, MUST BE CALLED FROM GUI_Thread
     root.destroy() #Close down the GUI thread, MUST BE CALLED FROM GUI_Thread
+    #################################################
     #################################################
 
 ##########################################################################################################
@@ -182,6 +239,9 @@ if __name__ == '__main__':
     global USE_GUI_FLAG
     USE_GUI_FLAG = 1
 
+    global USE_TABS_IN_GUI_FLAG
+    USE_TABS_IN_GUI_FLAG = 1
+
     global USE_VOLTAGEOUT_FLAG
     USE_VOLTAGEOUT_FLAG = 1
 
@@ -215,7 +275,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_VOLTAGEOUT = 0
     GUI_PADX_VOLTAGEOUT = 1
-    GUI_PADY_VOLTAGEOUT = 10
+    GUI_PADY_VOLTAGEOUT = 1
     GUI_ROWSPAN_VOLTAGEOUT = 1
     GUI_COLUMNSPAN_VOLTAGEOUT = 1
 
@@ -229,7 +289,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_MYPRINT = 0
     GUI_PADX_MYPRINT = 1
-    GUI_PADY_MYPRINT = 10
+    GUI_PADY_MYPRINT = 1
     GUI_ROWSPAN_MYPRINT = 1
     GUI_COLUMNSPAN_MYPRINT = 1
     #################################################
@@ -257,6 +317,23 @@ if __name__ == '__main__':
 
     global root
 
+    global root_Xpos
+    root_Xpos = 900
+
+    global root_Ypos
+    root_Ypos = 0
+
+    global root_width
+    root_width = 1920 - root_Xpos
+
+    global root_height
+    root_height = 1020 - root_Ypos
+
+    global TabControlObject
+    global Tab_MainControls
+    global Tab_VOLTAGEOUT
+    global Tab_MyPrint
+
     global GUI_RootAfterCallbackInterval_Milliseconds
     GUI_RootAfterCallbackInterval_Milliseconds = 30
     #################################################
@@ -270,6 +347,7 @@ if __name__ == '__main__':
     VOLTAGEOUT_OPEN_FLAG = -1
 
     global VOLTAGEOUT_MostRecentDict
+    VOLTAGEOUT_MostRecentDict = dict()
 
     global VOLTAGEOUT_MostRecentDict_VoltageOutputsList_EnabledState
     VOLTAGEOUT_MostRecentDict_VoltageOutputsList_EnabledState = [-1]*4
@@ -304,6 +382,9 @@ if __name__ == '__main__':
         time.sleep(0.5)  #Allow enough time for 'root' to be created that we can then pass it into other classes.
     else:
         root = None
+        Tab_MainControls = None
+        Tab_VOLTAGEOUT = None
+        Tab_MyPrint = None
     #################################################
     #################################################
 
@@ -311,7 +392,7 @@ if __name__ == '__main__':
     #################################################
     global PhidgetAnalog4Output1002_ReubenPython2and3ClassObject_GUIparametersDict
     PhidgetAnalog4Output1002_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_VOLTAGEOUT_FLAG),
-                                    ("root", root),
+                                    ("root", Tab_VOLTAGEOUT),
                                     ("EnableInternal_MyPrint_Flag", 1),
                                     ("NumberOfPrintLines", 10),
                                     ("UseBorderAroundThisGuiObjectFlag", 0),
@@ -324,7 +405,7 @@ if __name__ == '__main__':
 
     global PhidgetAnalog4Output1002_ReubenPython2and3ClassObject_setup_dict
     PhidgetAnalog4Output1002_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", PhidgetAnalog4Output1002_ReubenPython2and3ClassObject_GUIparametersDict),
-                                                                                ("DesiredSerialNumber", 589516), #CHANGE THIS TO MATCH YOUR UNIQUE SERIAL NUMBER
+                                                                                ("DesiredSerialNumber", -1), #-1 MEANS ANY SN, CHANGE THIS TO MATCH YOUR UNIQUE SERIAL NUMBER
                                                                                 ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
                                                                                 ("NameToDisplay_UserSet", "Reuben's Test Analog 4-output 1002"),
                                                                                 ("UsePhidgetsLoggingInternalToThisClassObjectFlag", 1),
@@ -337,7 +418,6 @@ if __name__ == '__main__':
     if USE_VOLTAGEOUT_FLAG == 1:
         try:
             PhidgetAnalog4Output1002_ReubenPython2and3ClassObject = PhidgetAnalog4Output1002_ReubenPython2and3Class(PhidgetAnalog4Output1002_ReubenPython2and3ClassObject_setup_dict)
-            time.sleep(0.25)
             VOLTAGEOUT_OPEN_FLAG = PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -352,7 +432,7 @@ if __name__ == '__main__':
     if USE_MYPRINT_FLAG == 1:
 
         MyPrint_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_MYPRINT_FLAG),
-                                                                        ("root", root),
+                                                                        ("root", Tab_MyPrint),
                                                                         ("UseBorderAroundThisGuiObjectFlag", 0),
                                                                         ("GUI_ROW", GUI_ROW_MYPRINT),
                                                                         ("GUI_COLUMN", GUI_COLUMN_MYPRINT),
@@ -369,7 +449,6 @@ if __name__ == '__main__':
 
         try:
             MyPrint_ReubenPython2and3ClassObject = MyPrint_ReubenPython2and3Class(MyPrint_ReubenPython2and3ClassObject_setup_dict)
-            time.sleep(0.25)
             MYPRINT_OPEN_FLAG = MyPrint_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -402,11 +481,13 @@ if __name__ == '__main__':
     print("Starting main loop 'test_program_for_PhidgetAnalog4Output1002_ReubenPython2and3Class.")
     StartingTime_MainLoopThread = getPreciseSecondsTimeStampString()
 
-    if USE_VOLTAGEOUT_FLAG == 1:
+    #################################################
+    if VOLTAGEOUT_OPEN_FLAG == 1:
         PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.SetEnabledState(0, 1)
         PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.SetEnabledState(1, 1)
         PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.SetEnabledState(2, 1)
         PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.SetEnabledState(3, 1)
+    #################################################
 
     while(EXIT_PROGRAM_FLAG == 0):
 
@@ -414,10 +495,9 @@ if __name__ == '__main__':
         CurrentTime_MainLoopThread = getPreciseSecondsTimeStampString() - StartingTime_MainLoopThread
         ###################################################
 
-        ###################################################
-        if USE_VOLTAGEOUT_FLAG == 1:
+        ################################################# GET's
+        if VOLTAGEOUT_OPEN_FLAG == 1:
 
-            ################################################# GETs
             VOLTAGEOUT_MostRecentDict = PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.GetMostRecentDataDict()
 
             if "Time" in VOLTAGEOUT_MostRecentDict:
@@ -427,17 +507,17 @@ if __name__ == '__main__':
                 VOLTAGEOUT_MostRecentDict_Time = VOLTAGEOUT_MostRecentDict["Time"]
 
                 #print("VOLTAGEOUT_MostRecentDict_VoltageOutputsList_EnabledState: " + str(VOLTAGEOUT_MostRecentDict_VoltageOutputsList_EnabledState))
-            #################################################
+        #################################################
 
-            ################################################# SETs
+        ################################################# SET's
+        if VOLTAGEOUT_OPEN_FLAG == 1:
+
             if USE_SINUSOIDAL_TEST_FLAG == 1:
                 TimeGain = math.pi / (2.0 * SINUSOIDAL_MOTION_INPUT_ROMtestTimeToPeakAngle)
                 DesiredVoltageOutput_0 = 0.5*(SINUSOIDAL_MOTION_INPUT_MaxValue + SINUSOIDAL_MOTION_INPUT_MinValue) + math.exp(0.0*CurrentTime_MainLoopThread)*0.5 * abs(SINUSOIDAL_MOTION_INPUT_MaxValue - SINUSOIDAL_MOTION_INPUT_MinValue) * math.sin(TimeGain * CurrentTime_MainLoopThread)  # AUTOMATIC SINUSOIDAL MOVEMENT
 
                 PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.SetVoltage(0, DesiredVoltageOutput_0)
-            #################################################
-
-        ###################################################
+        #################################################
 
         time.sleep(0.001)
     #################################################
@@ -447,15 +527,15 @@ if __name__ == '__main__':
     #################################################
     print("Exiting main program 'test_program_for_PhidgetAnalog4Output1002_ReubenPython2and3Class.")
 
-    #########################################################
+    #################################################
     if VOLTAGEOUT_OPEN_FLAG == 1:
         PhidgetAnalog4Output1002_ReubenPython2and3ClassObject.ExitProgram_Callback()
-    #########################################################
+    #################################################
 
-    #########################################################
+    #################################################
     if MYPRINT_OPEN_FLAG == 1:
         MyPrint_ReubenPython2and3ClassObject.ExitProgram_Callback()
-    #########################################################
+    #################################################
 
     #################################################
     #################################################
