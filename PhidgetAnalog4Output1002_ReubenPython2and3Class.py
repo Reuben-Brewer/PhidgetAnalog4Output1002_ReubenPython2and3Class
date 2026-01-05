@@ -2,16 +2,24 @@
 
 '''
 Reuben Brewer, Ph.D.
-reuben.brewer@gmail.com
+reuben.brewer@gmail.com,
 www.reubotics.com
 
 Apache 2 License
-Software Revision G, 08/29/2022
+Software Revision H, 12/28/2025
 
-Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
+Verified working on: Python 3.11/12/13 for Windows 10/11 64-bit and Raspberry Pi Bookworm (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
+
+##########################################################################################################
+##########################################################################################################
+
+###########################################################
+import ReubenGithubCodeModulePaths #Replaces the need to have "ReubenGithubCodeModulePaths.pth" within "C:\Anaconda3\Lib\site-packages".
+ReubenGithubCodeModulePaths.Enable()
+###########################################################
 
 ###########################################################
 import os
@@ -23,34 +31,16 @@ import math
 import collections
 from copy import * #for deepcopy
 import inspect #To enable 'TellWhichFileWereIn'
+import queue as Queue
 import threading
 import traceback
 ###########################################################
 
 ###########################################################
-if sys.version_info[0] < 3:
-    from Tkinter import * #Python 2
-    import tkFont
-    import ttk
-else:
-    from tkinter import * #Python 3
-    import tkinter.font as tkFont #Python 3
-    from tkinter import ttk
+from tkinter import *
+import tkinter.font as tkFont
+from tkinter import ttk
 ###########################################################
-
-###########################################################
-if sys.version_info[0] < 3:
-    import Queue  # Python 2
-else:
-    import queue as Queue  # Python 3
-###########################################################
-
-###########################################################
-if sys.version_info[0] < 3:
-    from builtins import raw_input as input
-else:
-    from future.builtins import input as input
-########################################################### "sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
 
 ###########################################################
 import platform
@@ -68,11 +58,14 @@ from Phidget22.LogLevel import *
 from Phidget22.Devices.VoltageOutput import *
 ###########################################################
 
+##########################################################################################################
+##########################################################################################################
+
 class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkinter Frame
 
     #######################################################################################################################
     #######################################################################################################################
-    def __init__(self, setup_dict): #Subclass the Tkinter Frame
+    def __init__(self, SetupDict): #Subclass the Tkinter Frame
 
         print("#################### PhidgetAnalog4Output1002_ReubenPython2and3Class __init__ starting. ####################")
 
@@ -114,6 +107,7 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
         self.VoltageOutputsList_Voltage = [-1] * self.NumberOfVoltageOutputs
         self.VoltageOutputsList_Voltage_NeedsToBeChangedFlag = [1]*self.NumberOfVoltageOutputs
         self.VoltageOutputsList_Voltage_ToBeSet = [0] * self.NumberOfVoltageOutputs
+        self.VoltageOutputsList_Voltage_Entry_TextContentList_NeedsToBeUpdatedFlag = [0] * self.NumberOfVoltageOutputs
 
         self.VoltageOutputsList_ListOfOnAttachCallbackFunctionNames = [self.VoltageOutput0onAttachCallback, self.VoltageOutput1onAttachCallback, self.VoltageOutput2onAttachCallback, self.VoltageOutput3onAttachCallback]
         self.VoltageOutputsList_ListOfOnDetachCallbackFunctionNames = [self.VoltageOutput0onDetachCallback, self.VoltageOutput1onDetachCallback, self.VoltageOutput2onDetachCallback, self.VoltageOutput3onDetachCallback]
@@ -147,8 +141,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "GUIparametersDict" in setup_dict:
-            self.GUIparametersDict = setup_dict["GUIparametersDict"]
+        if "GUIparametersDict" in SetupDict:
+            self.GUIparametersDict = SetupDict["GUIparametersDict"]
 
             #########################################################
             if "USE_GUI_FLAG" in self.GUIparametersDict:
@@ -157,14 +151,6 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
                 self.USE_GUI_FLAG = 0
 
             print("PhidgetAnalog4Output1002_ReubenPython2and3Class __init__: USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
-            #########################################################
-
-            #########################################################
-            if "root" in self.GUIparametersDict:
-                self.root = self.GUIparametersDict["root"]
-            else:
-                print("PhidgetAnalog4Output1002_ReubenPython2and3Class __init__: ERROR, must pass in 'root'")
-                return
             #########################################################
 
             #########################################################
@@ -277,9 +263,9 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "DesiredSerialNumber" in setup_dict:
+        if "DesiredSerialNumber" in SetupDict:
             try:
-                self.DesiredSerialNumber = int(setup_dict["DesiredSerialNumber"])
+                self.DesiredSerialNumber = int(SetupDict["DesiredSerialNumber"])
             except:
                 print("PhidgetAnalog4Output1002_ReubenPython2and3Class __init__: ERROR, DesiredSerialNumber invalid.")
                 return
@@ -292,8 +278,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "NameToDisplay_UserSet" in setup_dict:
-            self.NameToDisplay_UserSet = str(setup_dict["NameToDisplay_UserSet"])
+        if "NameToDisplay_UserSet" in SetupDict:
+            self.NameToDisplay_UserSet = str(SetupDict["NameToDisplay_UserSet"])
         else:
             self.NameToDisplay_UserSet = ""
 
@@ -303,8 +289,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "WaitForAttached_TimeoutDuration_Milliseconds" in setup_dict:
-            self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", setup_dict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
+        if "WaitForAttached_TimeoutDuration_Milliseconds" in SetupDict:
+            self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", SetupDict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
 
         else:
             self.WaitForAttached_TimeoutDuration_Milliseconds = 5000
@@ -315,8 +301,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in setup_dict:
-            self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", setup_dict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
+        if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in SetupDict:
+            self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", SetupDict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
         else:
             self.UsePhidgetsLoggingInternalToThisClassObjectFlag = 1
 
@@ -326,8 +312,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "VoltageOutputsList_MinVoltage" in setup_dict:
-            VoltageOutputsList_MinVoltage_TEMP = setup_dict["VoltageOutputsList_MinVoltage"]
+        if "VoltageOutputsList_MinVoltage" in SetupDict:
+            VoltageOutputsList_MinVoltage_TEMP = SetupDict["VoltageOutputsList_MinVoltage"]
             
             if self.IsInputList(VoltageOutputsList_MinVoltage_TEMP) == 1 and len(VoltageOutputsList_MinVoltage_TEMP) == self.NumberOfVoltageOutputs:
                 self.VoltageOutputsList_MinVoltage = list()
@@ -347,8 +333,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "VoltageOutputsList_MaxVoltage" in setup_dict:
-            VoltageOutputsList_MaxVoltage_TEMP = setup_dict["VoltageOutputsList_MaxVoltage"]
+        if "VoltageOutputsList_MaxVoltage" in SetupDict:
+            VoltageOutputsList_MaxVoltage_TEMP = SetupDict["VoltageOutputsList_MaxVoltage"]
             
             if self.IsInputList(VoltageOutputsList_MaxVoltage_TEMP) == 1 and len(VoltageOutputsList_MaxVoltage_TEMP) == self.NumberOfVoltageOutputs:
                 self.VoltageOutputsList_MaxVoltage = list()
@@ -368,8 +354,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "MainThread_TimeToSleepEachLoop" in setup_dict:
-            self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", setup_dict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
+        if "MainThread_TimeToSleepEachLoop" in SetupDict:
+            self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", SetupDict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
 
         else:
             self.MainThread_TimeToSleepEachLoop = 0.005
@@ -380,8 +366,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "ReadActualVoltageAfterSettingNewValueFlag" in setup_dict:
-            self.ReadActualVoltageAfterSettingNewValueFlag = self.PassThrough0and1values_ExitProgramOtherwise("ReadActualVoltageAfterSettingNewValueFlag", setup_dict["ReadActualVoltageAfterSettingNewValueFlag"])
+        if "ReadActualVoltageAfterSettingNewValueFlag" in SetupDict:
+            self.ReadActualVoltageAfterSettingNewValueFlag = self.PassThrough0and1values_ExitProgramOtherwise("ReadActualVoltageAfterSettingNewValueFlag", SetupDict["ReadActualVoltageAfterSettingNewValueFlag"])
         else:
             self.ReadActualVoltageAfterSettingNewValueFlag = 1
 
@@ -391,8 +377,8 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "ToggleVoltageToMeasureMaxFrequencyFlag" in setup_dict:
-            self.ToggleVoltageToMeasureMaxFrequencyFlag = self.PassThrough0and1values_ExitProgramOtherwise("ToggleVoltageToMeasureMaxFrequencyFlag", setup_dict["ToggleVoltageToMeasureMaxFrequencyFlag"])
+        if "ToggleVoltageToMeasureMaxFrequencyFlag" in SetupDict:
+            self.ToggleVoltageToMeasureMaxFrequencyFlag = self.PassThrough0and1values_ExitProgramOtherwise("ToggleVoltageToMeasureMaxFrequencyFlag", SetupDict["ToggleVoltageToMeasureMaxFrequencyFlag"])
         else:
             self.ToggleVoltageToMeasureMaxFrequencyFlag = 1
 
@@ -506,15 +492,6 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
             #########################################################
 
             #########################################################
-            if self.USE_GUI_FLAG == 1:
-                self.StartGUI(self.root)
-            #########################################################
-
-            ######################################################### Critical wait, or else the device won't be able to send commands from MainThread properly after opening.
-            time.sleep(0.25)
-            #########################################################
-
-            #########################################################
             self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 1
             #########################################################
 
@@ -524,74 +501,202 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
     #######################################################################################################################
     #######################################################################################################################
 
-    #######################################################################################################################
-    #######################################################################################################################
-    def __del__(self):
-        pass
-    #######################################################################################################################
-    #######################################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    def LimitNumber_IntOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
+
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = int(test_val)
+
+        return test_val
+    ##########################################################################################################
+    ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber):
+    def LimitNumber_FloatOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
 
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = float(test_val)
+
+        return test_val
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber, ExitProgramIfFailureFlag=1):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
+
+            ##########################################################################################################
             InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
-            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a numerical value, Exceptions: %s" % exceptions)
 
-        try:
-            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThrough0and1values_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be 0 or 1 (value was " +
-                          str(InputNumber_ConvertedToFloat) +
-                          "). Press any key (and enter) to exit.")
-
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
                 sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1.0:
+                return InputNumber_ConvertedToFloat
+
+            else:
+
+                print("PassThrough0and1values_ExitProgramOtherwise Error. '" +
+                      str(InputNameString) +
+                      "' must be 0 or 1 (value was " +
+                      str(InputNumber_ConvertedToFloat) +
+                      ").")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+
+                else:
+                    return -1
+                ##########################
+
+            ##########################################################################################################
+
         except:
+
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThrough0and1values_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue):
+    ##########################################################################################################
+    ##########################################################################################################
+    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue, ExitProgramIfFailureFlag=1):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
+            ##########################################################################################################
             InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
 
-        try:
-            if InputNumber_ConvertedToFloat >= RangeMinValue and InputNumber_ConvertedToFloat <= RangeMaxValue:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be in the range [" +
-                          str(RangeMinValue) +
-                          ", " +
-                          str(RangeMaxValue) +
-                          "] (value was " +
-                          str(InputNumber_ConvertedToFloat) + "). Press any key (and enter) to exit.")
-
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
                 sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            InputNumber_ConvertedToFloat_Limited = self.LimitNumber_FloatOutputOnly(RangeMinValue, RangeMaxValue, InputNumber_ConvertedToFloat)
+
+            if InputNumber_ConvertedToFloat_Limited != InputNumber_ConvertedToFloat:
+                print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
+                      str(InputNameString) +
+                      "' must be in the range [" +
+                      str(RangeMinValue) +
+                      ", " +
+                      str(RangeMaxValue) +
+                      "] (value was " +
+                      str(InputNumber_ConvertedToFloat) + ")")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+                else:
+                    return -11111.0
+                ##########################
+
+            else:
+                return InputNumber_ConvertedToFloat_Limited
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
@@ -883,6 +988,7 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
             self.VoltageOutputsList_Voltage_ToBeSet[VoltageOutputChannel] = VoltageToBeSet_Limited
             self.VoltageOutputsList_Voltage_NeedsToBeChangedFlag[VoltageOutputChannel] = 1
             self.VoltageOutputsList_Voltage_Entry_TextContentList_NeedsToBeUpdatedFlag[VoltageOutputChannel] = 1
+
         else:
             print("SetVoltage ERROR: VoltageOutputChannel must be 0, 1, 2, or 3!")
 
@@ -1014,24 +1120,14 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
     ##########################################################################################################
     ##########################################################################################################
-    def StartGUI(self, GuiParent):
+    def CreateGUIobjects(self, TkinterParent):
 
-        self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        self.GUI_Thread_ThreadingObject.start()
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def GUI_Thread(self, parent):
-
-        print("Starting the GUI_Thread for PhidgetAnalog4Output1002_ReubenPython2and3Class object.")
+        print("PhidgetAnalog4Output1002_ReubenPython2and3Class, CreateGUIobjects event fired.")
 
         ###################################################
         ###################################################
-        self.root = parent
-        self.parent = parent
+        self.root = TkinterParent
+        self.parent = TkinterParent
         ###################################################
         ###################################################
 
@@ -1100,7 +1196,6 @@ class PhidgetAnalog4Output1002_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         ###################################################
         ###################################################
-        self.VoltageOutputsList_Voltage_Entry_TextContentList_NeedsToBeUpdatedFlag = [0] * self.NumberOfVoltageOutputs
         self.VoltageOutputsList_Voltage_Entry_TextContentList = list()
         self.VoltageOutputsList_Voltage_Entry_TextInputBoxList = list()
         for VoltageOutputChannel in range(0, self.NumberOfVoltageOutputs):

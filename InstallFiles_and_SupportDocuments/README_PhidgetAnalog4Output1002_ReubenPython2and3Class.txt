@@ -12,7 +12,9 @@ The board is not isolated and all 4 channels share a common ground.
 All the power is supplied by via USB."
 
 PhidgetAnalog 4-Output
+
 ID: 1002_0B
+
 https://www.phidgets.com/?tier=3&catid=2&pcid=1&prodid=1018
 
 Reuben Brewer, Ph.D.
@@ -23,12 +25,16 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision G, 08/29/2022
+Software Revision H, 12/28/2025
 
-Verified working on: 
-Python 2.7, 3.8.
-Windows 8.1, 10 64-bit
-Raspberry Pi Buster 
+Verified working on:
+
+Python 3.11/12/13.
+
+Windows 10/11 64-bit
+
+Raspberry Pi Bookworm
+
 (no Mac testing yet)
 
 *NOTE THAT YOU MUST INSTALL BOTH THE Phidget22 LIBRARY AS WELL AS THE PYTHON MODULE.*
@@ -37,14 +43,18 @@ Raspberry Pi Buster
 
 ########################### Python module installation instructions, all OS's
 
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'Phidget22']
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins']
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'MyPrint_ReubenPython2and3Class', 'Phidget22']
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies: ['Phidget22', 'ReubenGithubCodeModulePaths']
+
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['keyboard', 'MyPrint_ReubenPython2and3Class', 'ReubenGithubCodeModulePaths']
+
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: []
+
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_All:['keyboard', 'MyPrint_ReubenPython2and3Class', 'Phidget22', 'ReubenGithubCodeModulePaths']
 
 https://pypi.org/project/Phidget22/#files
 
 To install the Python module using pip:
+
 pip install Phidget22       (with "sudo" if on Linux/Raspberry Pi)
 
 To install the Python module from the downloaded .tar.gz file, enter downloaded folder and type "python setup.py install"
@@ -68,6 +78,7 @@ https://www.phidgets.com/docs/OS_-_Linux#Quick_Downloads
 https://www.phidgets.com/education/learn/getting-started-kit-tutorial/install-libraries/
 
 curl -fsSL https://www.phidgets.com/downloads/setup_linux | sudo -E bash -
+
 sudo apt-get install -y libphidget22
  
 ###########################
