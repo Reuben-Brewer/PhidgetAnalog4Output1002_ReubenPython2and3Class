@@ -5,10 +5,11 @@ PhidgetAnalog4Output1002_ReubenPython2and3Class
 Wrapper (including ability to hook to Tkinter GUI) to control Phidget Analog 4-Output (4 analog-out voltages @ 12 bit resolution) 1002 (non VINT).
 
 From Phidgets' website:
-
 "The PhidgetAnalog 4-Output Produces a voltage over -10V to +10V at a maximum of 20mA.
 If this current is exceeded an error will be thrown to notify that the voltage may have dropped below the setpoint.
-The voltage is produced with 12 bit resolution (4.8mV). The board is not isolated and all 4 channels share a common ground. All the power is supplied by via USB."
+The voltage is produced with 12 bit resolution (4.8mV).
+The board is not isolated and all 4 channels share a common ground.
+All the power is supplied by via USB."
 
 PhidgetAnalog 4-Output
 
@@ -24,15 +25,15 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision G, 08/29/2022
+Software Revision H, 12/28/2025
 
-Verified working on: 
+Verified working on:
 
-Python 2.7, 3.8.
+Python 3.11/12/13.
 
-Windows 8.1, 10 64-bit
+Windows 10/11 64-bit
 
-Raspberry Pi Buster 
+Raspberry Pi Bookworm
 
 (no Mac testing yet)
 
@@ -42,13 +43,13 @@ Raspberry Pi Buster
 
 ########################### Python module installation instructions, all OS's
 
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'Phidget22']
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies: ['Phidget22', 'ReubenGithubCodeModulePaths']
 
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['keyboard', 'MyPrint_ReubenPython2and3Class', 'ReubenGithubCodeModulePaths']
 
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins']
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: []
 
-PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'MyPrint_ReubenPython2and3Class', 'Phidget22']
+PhidgetAnalog4Output1002_ReubenPython2and3Class, ListOfModuleDependencies_All:['keyboard', 'MyPrint_ReubenPython2and3Class', 'Phidget22', 'ReubenGithubCodeModulePaths']
 
 https://pypi.org/project/Phidget22/#files
 
